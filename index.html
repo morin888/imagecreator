@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Creator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Custom Image Generator</h1>
+        <form id="imageForm">
+            <label for="textInput">Text for Image:</label>
+            <textarea id="textInput" name="text" placeholder="Enter text..." rows="4"></textarea>
+
+            <label for="imageUrl">Custom Image URL:</label>
+            <input type="url" id="imageUrl" name="imageUrl" placeholder="Enter image URL" />
+
+            <button type="submit" class="submit-btn">Generate Image</button>
+        </form>
+
+        <div id="result" class="result">
+            <h2>Your Image:</h2>
+            <img id="generatedImage" src="" alt="Generated Image" style="display:none;">
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("imageForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const text = document.getElementById("textInput").value;
+            const imageUrl = document.getElementById("imageUrl").value;
+
+            const formData = new FormData();
+            formData.append('text', text);
+            formData.append('imageUrl', imageUrl);
+
+            const response = await fetch('/generate_image', {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+            if (response.ok) {
+                const imgElement = document.getElementById("generatedImage");
+                imgElement.src = result.image_path;
+                imgElement.style.display = 'block';
+            } else {
+                alert('Error generating image');
+            }
+        });
+    </script>
+</body>
+</html>
